@@ -24,6 +24,25 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
             <header>
                 <div class="filterEntries">
                     <div class="filter">
+                        <label for="type">Sort by:</label>
+                        <div class="entries">
+                            <select name="" id="sort">
+                                <option value="1">ID Ascending</option>
+                                <option value="2">ID Descending</option>
+                                <option value="2">Name Descending</option>
+                                <option value="2">Name Descending</option>
+                                <option value="2">Highest Rating</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter">
+                        <label for="search">Search:</label>
+                        <input action="home.php" type="search" id="search" placeholder="Enter Name/ Author">
+                    </div>
+                </div>
+                <div class="addMemberBtn">
+                    <a class="button" href="add.php"><button>New Document</button></a>
+=======
                         <label for="search">Search:</label>
                         <input type="search" name="" id="search" placeholder="Enter Name/ Author">
                     </div>
@@ -47,6 +66,12 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 <tbody class="userInfo">
                     <?php 
                         $sql = 
+                        "SELECT D.*, AVG(R.Rating) AS Rating, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' end as 'Type', GROUP_CONCAT(A.Author, ', ') AS Author
+                        FROM books_author AS A, documents AS D
+                        LEFT JOIN review_comments AS R ON R.Document_ID = D.Document_ID 
+                        LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID
+                        LEFT JOIN books AS B ON B.Document_ID = D.Document_ID
+=======
                         "SELECT D.*, R.Rating, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' end as 'Type', GROUP_CONCAT(A.Author, ', ') AS Author
                         FROM documents AS D
                         LEFT JOIN review_comments AS R ON R.Document_ID = D.Document_ID 
@@ -70,9 +95,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                             <td>$row[Author]</td>
                             <td>$row[Rating]</td>
                             <td>
+
+                                <a class='button' href='comment.php?id=$row[Document_ID]'><button><i class='fa-regular fa-eye'></i></button></a>
+                                <a class='button' href='edit.php?id=$row[Document_ID]'><button><i class='fa-regular fa-pen-to-square'></i></button></a>
+                                <a class='button' href='delete.php?id=$row[Document_ID]'><button><i class='fa-regular fa-trash-can'></i></button></a>
+=======
                                 <button><i class='fa-regular fa-eye'></i></button>
                                 <button><i class='fa-regular fa-pen-to-square'></i></button>
                                 <button><i class='fa-regular fa-trash-can'></i></button>
+
                             </td>
                             </tr>";
                         }
@@ -80,6 +111,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 </tbody>
             </table>
         </div>
+
+=======
         <!--Popup Form-->
         <div class="dark_bg">
             <div class="popup">
@@ -120,6 +153,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
             </div>
         </div>
         <script src="main.js"></script>
+
     </body>
 </html>
 <?php 
