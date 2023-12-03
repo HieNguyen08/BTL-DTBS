@@ -317,3 +317,9 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button{
     width: 100%;
     font-size: 1em;
 }
+table.sortable th button:focus,
+table.sortable th button:hover {
+  padding: 2px;
+  border: 2px solid currentcolor;
+  background-color: var(--dark6);
+}

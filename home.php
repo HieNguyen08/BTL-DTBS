@@ -11,6 +11,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         <title>View</title>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="login.css">
+        <link rel="stylesheet" href="table.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
     <body style="flex-direction: column;">
@@ -24,18 +25,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
             <header>
                 <div class="filterEntries">
                     <div class="filter">
-                        <label for="type">Sort by:</label>
-                        <div class="entries">
-                            <select name="" id="sort">
-                                <option value="1">ID Ascending</option>
-                                <option value="2">ID Descending</option>
-                                <option value="2">Name Descending</option>
-                                <option value="2">Name Descending</option>
-                                <option value="2">Highest Rating</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filter">
                         <label for="search">Search:</label>
                         <input action="home.php" type="search" id="search" placeholder="Enter Name/Author/Publisher">
                     </div>
@@ -44,15 +33,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                     <a class="button" href="add.php"><button>New Document</button></a>
                 </div>
             </header>
-            <table>
-                <thead>
+            <table class="sortable">
+                <thead style="height:30px;">
                     <tr class="heading">
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Language</th>
-                        <th>Author/Publisher</th>
-                        <th>Rating</th>
+                        <th><button>ID<span aria-hidden="true"></span></button></th>
+                        <th><button>Name<span aria-hidden="true"></span></button></th>
+                        <th><button>Type<span aria-hidden="true"></span></button></th>
+                        <th><button>Language<span aria-hidden="true"></span></button></th>
+                        <th><button>Author/Publisher<span aria-hidden="true"></span></button></th>
+                        <th><button>Rating<span aria-hidden="true"></span></button></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -95,6 +84,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 </tbody>
             </table>
         </div>
+        <script src="main.js"></script>
     </body>
 </html>
 <?php 
