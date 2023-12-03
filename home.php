@@ -37,7 +37,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                     </div>
                     <div class="filter">
                         <label for="search">Search:</label>
-                        <input action="home.php" type="search" id="search" placeholder="Enter Name/ Author">
+                        <input action="home.php" type="search" id="search" placeholder="Enter Name/Author/Publisher">
                     </div>
                 </div>
                 <div class="addMemberBtn">
@@ -51,7 +51,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                         <th>Name</th>
                         <th>Type</th>
                         <th>Language</th>
-                        <th>Author</th>
+                        <th>Author/Publisher</th>
                         <th>Rating</th>
                         <th>Action</th>
                     </tr>
@@ -59,10 +59,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 <tbody class="userInfo">
                     <?php 
                         $sql = 
-                        "SELECT D.*, AVG(R.Rating) AS Rating, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' END AS 'Type', 
+                        "SELECT D.*, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' END AS 'Type', 
                         CASE WHEN D.Document_ID = A.Document_ID THEN A.Author WHEN D.Document_ID = Pb.Document_ID THEN  P.pname END AS 'Author'
                         FROM documents AS D 
-                        LEFT JOIN review_comments AS R ON R.Document_ID = D.Document_ID
                         LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID 
                         LEFT JOIN books AS B ON B.Document_ID = D.Document_ID 
                         LEFT JOIN books_author AS A ON A.Document_ID = D.Document_ID
@@ -76,6 +75,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                         }
 
                         while ($row = $result->fetch_assoc()) {
+                            $rating = $conn->query("SELECT AverageRating($row[Document_ID]);")->fetch_assoc()["AverageRating($row[Document_ID])"];
                             echo 
                             "<tr class = 'employeeDetails'>
                             <td>$row[Document_ID]</td>
@@ -83,7 +83,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                             <td>$row[Type]</td>
                             <td>$row[dlanguage]</td>
                             <td>$row[Author]</td>
-                            <td>$row[Rating]</td>
+                            <td>$rating</td>
                             <td>
                                 <a class='button' href='comment.php?id=$row[Document_ID]'><button><i class='fa-regular fa-eye'></i></button></a>
                                 <a class='button' href='edit.php?id=$row[Document_ID]'><button><i class='fa-regular fa-pen-to-square'></i></button></a>
