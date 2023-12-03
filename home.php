@@ -2,7 +2,7 @@
 include "db_conn.php";
 session_start();
 if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
-
+    $search = $_GET["search"]
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,12 +23,12 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         </div>
         <div class="container">
             <header>
-                <div class="filterEntries">
+                <form class="filterEntries" action="search.php" method="get">
                     <div class="filter">
                         <label for="search">Search:</label>
-                        <input action="home.php" type="search" id="search" placeholder="Enter Name/Author/Publisher">
+                        <input action="home.php" type="search" id="search" name="search" placeholder="Enter Name/Author/Publisher">
                     </div>
-                </div>
+                </form>
                 <div class="addMemberBtn">
                     <a class="button" href="add.php"><button>New Document</button></a>
                 </div>
@@ -47,6 +47,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 </thead>
                 <tbody class="userInfo">
                     <?php 
+                        if ($search) {
                         $sql = 
                         "SELECT D.*, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' END AS 'Type', 
                         CASE WHEN D.Document_ID = A.Document_ID THEN A.Author WHEN D.Document_ID = Pb.Document_ID THEN  P.pname END AS 'Author'
@@ -56,13 +57,21 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                         LEFT JOIN books_author AS A ON A.Document_ID = D.Document_ID
                         LEFT JOIN published_by AS Pb ON Pb.Document_ID = D.Document_ID 
                         LEFT JOIN  publishers AS P ON Pb.Publisher_ID = P.Publisher_ID
-                        GROUP BY D.Document_ID;";
-                        $result = $conn->query($sql);
-                        
-                        if (!$result) {
-                            die('Invalid query: '. $conn->error);
+                        WHERE D.Dname LIKE '%{$search}%' OR P.pname LIKE '%{$search}%' OR A.Author LIKE '%{$search}%'
+                        GROUP BY D.Document_ID;";}
+                        else {
+                        $sql = 
+                        "SELECT D.*, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' END AS 'Type', 
+                        CASE WHEN D.Document_ID = A.Document_ID THEN A.Author WHEN D.Document_ID = Pb.Document_ID THEN  P.pname END AS 'Author'
+                        FROM documents AS D 
+                        LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID 
+                        LEFT JOIN books AS B ON B.Document_ID = D.Document_ID 
+                        LEFT JOIN books_author AS A ON A.Document_ID = D.Document_ID
+                        LEFT JOIN published_by AS Pb ON Pb.Document_ID = D.Document_ID 
+                        LEFT JOIN  publishers AS P ON Pb.Publisher_ID = P.Publisher_ID
+                        GROUP BY D.Document_ID;"; 
                         }
-
+                        $result = $conn->query($sql);
                         while ($row = $result->fetch_assoc()) {
                             $rating = $conn->query("SELECT AverageRating($row[Document_ID]);")->fetch_assoc()["AverageRating($row[Document_ID])"];
                             echo 
@@ -74,7 +83,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                             <td>$row[Author]</td>
                             <td>$rating</td>
                             <td>
-                                <a class='button' href='comment.php?id=$row[Document_ID]'><button><i class='fa-regular fa-eye'></i></button></a>
                                 <a class='button' href='edit.php?id=$row[Document_ID]'><button><i class='fa-regular fa-pen-to-square'></i></button></a>
                                 <a class='button' href='delete.php?id=$row[Document_ID]'><button><i class='fa-regular fa-trash-can'></i></button></a>
                             </td>
