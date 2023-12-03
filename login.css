@@ -18,14 +18,10 @@ body {
     background-position: center;
 }
 h4 {
-
     color: rgb(var(--font-color));
 }
 .modalTitle {
     color: rgb(var(--font-color));
-=======
-    color: rgb(var(--font-color))
-
 }
 .header {
     width: 100%;
