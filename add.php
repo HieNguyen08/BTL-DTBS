@@ -6,6 +6,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
     $language = "";
     $type = "";
     $author = "";
+    $ID = 1;
 
     $success = "";
 
@@ -14,19 +15,60 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         $language = $_POST["language"];
         $type = $_POST["type"];
         $author = $_POST["author"];
-        do {
-            $name = "";
-            $language = "";
-            $type = "";
-            $author = "";
 
-            $success = "Document Added";
+        $sql = "INSERT INTO documents(DName, Document_ID) VALUES (?, ?)";
+        $stmt1 = $conn->prepare($sql);
+        switch ($type) {
+            case "book" :
+                $sql = "INSERT INTO books(Document_ID) VALUES (?)";
+                $stmt2 = $conn->prepare($sql);
+                $sql = "INSERT INTO books_author(Author, Document_ID) VALUES (?, ?)";
+                $stmt4 = $conn->prepare($sql);
+                break;
+            case "journal":
+                $sql = "INSERT INTO journals(Document_ID) VALUES (?)";
+                $stmt2 = $conn->prepare($sql);
+                $sql = "INSERT INTO published_by(Document_ID, Publisher_ID) VALUES (?, ?)";
+                $stmt4 = $conn->prepare($sql);
+                $sql = "INSERT INTO publishers(Publisher_ID, pname) VALUES (?. ?)";
+                $stmt5 = $conn->prepare($sql);
+                break;
+        }
+        $sql = "INSERT INTO documents_language(dlanguage, Document_ID) VALUES (?, ?)";
+        $stmt3 = $conn->prepare($sql);
 
-            $sql = 
-            "INSERT INTO documents (name)
-            VALUES ('$name')";
-            $result = $conn->query($sql);
-        } while (false);        
+        // Check if the statement was prepared successfully
+        if ($stmt1 && $stmt2 && $stmt3 && $stmt4) {
+            // Bind parameters and execute the statement
+            $stmt1->bind_param("ss", $name, $ID);
+            $stmt1->execute();
+            $stmt2->bind_param("s", $ID);
+            $stmt2->execute();
+            $stmt3->bind_param("ss", $language, $ID);
+            $stmt3->execute();
+            switch ($type) {
+                case "book" :
+                    $stmt4->bind_param("ss", $author, $ID);
+                    $stmt4->execute();
+                    break;
+                case "journal":
+                    $stmt4->bind_param("ss", $ID, $ID);
+                    $stmt4->execute();
+                    $stmt5->bind_param("ss", $ID, $author);
+                    $stmt5->execute();
+                    break;
+            }
+            // Check if the execution was successful
+            if ($stmt1->affected_rows > 0 && $stmt2->affected_rows > 0 && $stmt3->affected_rows > 0) {
+                $success = "Document Added";
+            }
+            // Close the statement
+            $stmt1->close();
+            $stmt2->close();
+            $stmt3->close();
+        } else {
+            $success = "Error preparing statement: " . $conn->error;
+        }
     }
 ?>
 <!DOCTYPE html>
@@ -39,12 +81,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
     <body style="flex-direction: column;">
-        <div class="header">
-            <h2 class="logo">Database</h2>
-            <nav class="nagivation">
-                <a class="button" href="logout.php"><button class="btnlogout">Log Out</button></a>
-            </nav>
-        </div>
         <div class="dark_bg active">
             <div class="popup active">
                 <header>
@@ -72,13 +108,18 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                                 <input type="name=" name="language" id="language" value="<?php echo $language ?>" required>
                             </div>
                             <div class="form_control">
-                                <label for="author">Author:<h4>*</h4></label>
+                                <label for="author">Author/Publisher:<h4>*</h4></label>
                                 <input type="name=" name="author" id="author" value="<?php echo $author ?>" required>
                             </div>
                         </div>
                     </form>
                 </div>
                 <footer class="popupFooter">
+                <?php 
+                if ($success) {
+                    echo $success;
+                }
+                ?>
                     <button form="myForm" class="submitBtn" type="Submit">Submit</button>
                 </footer>
             </div>

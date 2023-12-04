@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="login.css">
     </head>
     <body>
-        <header class="header">
+        <header class="header" style="position: fixed; top:0; left:0;">
             <h2 class="logo">Database</h2>
             <nav class="nagivation">
                 <button class="btnlogin">Login</button>

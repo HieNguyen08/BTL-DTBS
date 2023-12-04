@@ -2,7 +2,7 @@
 include "db_conn.php";
 session_start();
 if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
-
+    $search = $_GET["search"]
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +11,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         <title>View</title>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="login.css">
+        <link rel="stylesheet" href="table.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
     <body style="flex-direction: column;">
@@ -22,70 +23,57 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         </div>
         <div class="container">
             <header>
-                <div class="filterEntries">
-                    <div class="filter">
-                        <label for="type">Sort by:</label>
-                        <div class="entries">
-                            <select name="" id="sort">
-                                <option value="1">ID Ascending</option>
-                                <option value="2">ID Descending</option>
-                                <option value="2">Name Descending</option>
-                                <option value="2">Name Descending</option>
-                                <option value="2">Highest Rating</option>
-                            </select>
-                        </div>
-                    </div>
+                <form class="filterEntries" action="search.php" method="get">
                     <div class="filter">
                         <label for="search">Search:</label>
-                        <input action="home.php" type="search" id="search" placeholder="Enter Name/ Author">
+                        <input action="home.php" type="search" id="search" name="search" placeholder="Enter Name/Author/Publisher">
                     </div>
-                </div>
+                </form>
                 <div class="addMemberBtn">
                     <a class="button" href="add.php"><button>New Document</button></a>
-=======
-                        <label for="search">Search:</label>
-                        <input type="search" name="" id="search" placeholder="Enter Name/ Author">
-                    </div>
-                </div>
-                <div class="addMemberBtn">
-                    <button>New Document</button>
                 </div>
             </header>
-            <table>
-                <thead>
+            <table class="sortable">
+                <thead style="height:30px;">
                     <tr class="heading">
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Language</th>
-                        <th>Author</th>
-                        <th>Rating</th>
+                        <th><button>ID<span aria-hidden="true"></span></button></th>
+                        <th><button>Name<span aria-hidden="true"></span></button></th>
+                        <th><button>Type<span aria-hidden="true"></span></button></th>
+                        <th><button>Language<span aria-hidden="true"></span></button></th>
+                        <th><button>Author/Publisher<span aria-hidden="true"></span></button></th>
+                        <th><button>Rating<span aria-hidden="true"></span></button></th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody class="userInfo">
                     <?php 
+                        if ($search) {
                         $sql = 
-                        "SELECT D.*, AVG(R.Rating) AS Rating, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' end as 'Type', GROUP_CONCAT(A.Author, ', ') AS Author
-                        FROM books_author AS A, documents AS D
-                        LEFT JOIN review_comments AS R ON R.Document_ID = D.Document_ID 
-                        LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID
-                        LEFT JOIN books AS B ON B.Document_ID = D.Document_ID
-=======
-                        "SELECT D.*, R.Rating, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' end as 'Type', GROUP_CONCAT(A.Author, ', ') AS Author
-                        FROM documents AS D
-                        LEFT JOIN review_comments AS R ON R.Document_ID = D.Document_ID 
-                        LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID
-                        LEFT JOIN books AS B ON B.Document_ID = D.Document_ID,
-                        books_author AS A
-                        GROUP BY D.Document_ID;";
-                        $result = $conn->query($sql);
-                        
-                        if (!$result) {
-                            die('Invalid query: '. $conn->error);
+                        "SELECT D.*, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' END AS 'Type', 
+                        CASE WHEN D.Document_ID = A.Document_ID THEN A.Author WHEN D.Document_ID = Pb.Document_ID THEN  P.pname END AS 'Author'
+                        FROM documents AS D 
+                        LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID 
+                        LEFT JOIN books AS B ON B.Document_ID = D.Document_ID 
+                        LEFT JOIN books_author AS A ON A.Document_ID = D.Document_ID
+                        LEFT JOIN published_by AS Pb ON Pb.Document_ID = D.Document_ID 
+                        LEFT JOIN  publishers AS P ON Pb.Publisher_ID = P.Publisher_ID
+                        WHERE D.Dname LIKE '%{$search}%' OR P.pname LIKE '%{$search}%' OR A.Author LIKE '%{$search}%'
+                        GROUP BY D.Document_ID;";}
+                        else {
+                        $sql = 
+                        "SELECT D.*, L.dlanguage, CASE WHEN D.Document_ID = B.Document_ID THEN 'Book' ELSE 'Journal' END AS 'Type', 
+                        CASE WHEN D.Document_ID = A.Document_ID THEN A.Author WHEN D.Document_ID = Pb.Document_ID THEN  P.pname END AS 'Author'
+                        FROM documents AS D 
+                        LEFT JOIN documents_language AS L ON L.Document_ID = D.Document_ID 
+                        LEFT JOIN books AS B ON B.Document_ID = D.Document_ID 
+                        LEFT JOIN books_author AS A ON A.Document_ID = D.Document_ID
+                        LEFT JOIN published_by AS Pb ON Pb.Document_ID = D.Document_ID 
+                        LEFT JOIN  publishers AS P ON Pb.Publisher_ID = P.Publisher_ID
+                        GROUP BY D.Document_ID;"; 
                         }
-
+                        $result = $conn->query($sql);
                         while ($row = $result->fetch_assoc()) {
+                            $rating = $conn->query("SELECT AverageRating($row[Document_ID]);")->fetch_assoc()["AverageRating($row[Document_ID])"];
                             echo 
                             "<tr class = 'employeeDetails'>
                             <td>$row[Document_ID]</td>
@@ -93,17 +81,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                             <td>$row[Type]</td>
                             <td>$row[dlanguage]</td>
                             <td>$row[Author]</td>
-                            <td>$row[Rating]</td>
+                            <td>$rating</td>
                             <td>
-
-                                <a class='button' href='comment.php?id=$row[Document_ID]'><button><i class='fa-regular fa-eye'></i></button></a>
                                 <a class='button' href='edit.php?id=$row[Document_ID]'><button><i class='fa-regular fa-pen-to-square'></i></button></a>
                                 <a class='button' href='delete.php?id=$row[Document_ID]'><button><i class='fa-regular fa-trash-can'></i></button></a>
-=======
-                                <button><i class='fa-regular fa-eye'></i></button>
-                                <button><i class='fa-regular fa-pen-to-square'></i></button>
-                                <button><i class='fa-regular fa-trash-can'></i></button>
-
                             </td>
                             </tr>";
                         }
@@ -111,49 +92,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 </tbody>
             </table>
         </div>
-
-=======
-        <!--Popup Form-->
-        <div class="dark_bg">
-            <div class="popup">
-                <header>
-                    <h2 class="modalTitle">Fill the Form</h2>
-                    <button class="closeBtn">&times;</button>
-                </header>
-                <div class="body">
-                    <form action="#" id="myForm">
-                        <div class="inputFieldContainer">
-                            <div class="form_control">
-                                <label for="name">Document Name:<h4>*</h4></label>
-                                <input type="name" name="" id="name" required>
-                            </div>
-                            <div class="form_control">
-                                <label for="type">Type:<h4>*</h4></label>
-                                <div class="entries">
-                                    <select name="" id="book_type">
-                                        <option value="book">Book</option>
-                                        <option value="journal">Journal</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form_control">
-                                <label for="language">Language:<h4>*</h4></label>
-                                <input type="name=" name="" id="language" required>
-                            </div>
-                            <div class="form_control">
-                                <label for="author">Author:<h4>*</h4></label>
-                                <input type="name=" name="" id="author" required>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <footer class="popupFooter">
-                    <button form="myForm" class="submitBtn">Submit</button>
-                </footer>
-            </div>
-        </div>
         <script src="main.js"></script>
-
     </body>
 </html>
 <?php 
