@@ -2,7 +2,14 @@
 include "db_conn.php";
 session_start();
 if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
+
     $search = $_GET["search"]
+=======
+    $search = "";
+    if(isset($_GET["search"])) {
+        $search = $_GET["search"];
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +21,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         <link rel="stylesheet" href="table.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
+
     <style>
     
         nav {
@@ -38,6 +46,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
 
     /* Keeping the 'Log Out' button style unchanged */
     </style>
+=======
+
     <body style="flex-direction: column;">
         <div class="header">
             <h2 class="logo">Database</h2>
@@ -45,10 +55,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 <a class="button" href="logout.php"><button class="btnlogout">Log Out</button></a>
             </nav>
         </div>
+
         <nav>
             <a href="home.php">Manage Document</a>
             <a href="member.php">Manage Member</a>
         </nav>
+=======
+
         <div class="container">
             <header>
                 <form class="filterEntries" action="search.php" method="get">

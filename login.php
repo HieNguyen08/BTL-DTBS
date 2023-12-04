@@ -18,7 +18,11 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             $_SESSION['user'] = $row['user'];
             $_SESSION['pass'] = $row['pass'];
             $_SESSION['id'] = $row['ID'];
+
             header("location: main.php");
+=======
+            header("location: home.php");
+
             exit();
         }
     }
