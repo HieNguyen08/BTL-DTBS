@@ -18,33 +18,49 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
 
         $sql = "INSERT INTO documents(DName, Document_ID) VALUES (?, ?)";
         $stmt1 = $conn->prepare($sql);
-        if ($type = "book") {
-            $sql = "INSERT INTO book(Document_ID) VALUES (?)";
-            $stmt2 = $conn->prepare($sql);
-        }
-        else {
-            $sql = "INSERT INTO documents(DName, Document_ID) VALUES (?, ?)";
-            $stmt2 = $conn->prepare($sql);
+        switch ($type) {
+            case "book" :
+                $sql = "INSERT INTO books(Document_ID) VALUES (?)";
+                $stmt2 = $conn->prepare($sql);
+                $sql = "INSERT INTO books_author(Author, Document_ID) VALUES (?, ?)";
+                $stmt4 = $conn->prepare($sql);
+                break;
+            case "journal":
+                $sql = "INSERT INTO journals(Document_ID) VALUES (?)";
+                $stmt2 = $conn->prepare($sql);
+                $sql = "INSERT INTO published_by(Document_ID, Publisher_ID) VALUES (?, ?)";
+                $stmt4 = $conn->prepare($sql);
+                $sql = "INSERT INTO publishers(Publisher_ID, pname) VALUES (?. ?)";
+                $stmt5 = $conn->prepare($sql);
+                break;
         }
         $sql = "INSERT INTO documents_language(dlanguage, Document_ID) VALUES (?, ?)";
         $stmt3 = $conn->prepare($sql);
-        $sql = "INSERT INTO documents(DName, Document_ID) VALUES (?, ?)";
-        $stmt4 = $conn->prepare($sql);
 
         // Check if the statement was prepared successfully
-        if ($stmt1 && $stmt2 && $stmt3) {
+        if ($stmt1 && $stmt2 && $stmt3 && $stmt4) {
             // Bind parameters and execute the statement
             $stmt1->bind_param("ss", $name, $ID);
             $stmt1->execute();
-            $stmt3->bind_param("s", $ID);
-            $stmt3->execute();
+            $stmt2->bind_param("s", $ID);
+            $stmt2->execute();
             $stmt3->bind_param("ss", $language, $ID);
             $stmt3->execute();
+            switch ($type) {
+                case "book" :
+                    $stmt4->bind_param("ss", $author, $ID);
+                    $stmt4->execute();
+                    break;
+                case "journal":
+                    $stmt4->bind_param("ss", $ID, $ID);
+                    $stmt4->execute();
+                    $stmt5->bind_param("ss", $ID, $author);
+                    $stmt5->execute();
+                    break;
+            }
             // Check if the execution was successful
             if ($stmt1->affected_rows > 0 && $stmt2->affected_rows > 0 && $stmt3->affected_rows > 0) {
                 $success = "Document Added";
-            } else {
-                $success = "Error adding document: " . $stmt1->error;
             }
             // Close the statement
             $stmt1->close();
