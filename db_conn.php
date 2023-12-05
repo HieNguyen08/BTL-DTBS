@@ -2,7 +2,10 @@
 $sname = "localhost";
 $uname = "root";
 $pass = "";
+
+
 $db = "test";
+
 
 $conn = mysqli_connect($sname, $uname, $pass, $db);
 

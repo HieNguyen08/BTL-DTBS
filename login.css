@@ -1,12 +1,23 @@
 @import url('https://fonts.googleapis.com/css?family=League+Spartan:100,200,300,400,500,600,700,800,900&display=swap'); 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700,800,300i,400i,500i,600i,700i,800i&display=swap'); 
 
+:root {
+    --dark1: #0000004d;
+    --dark2: #181c20;
+    --dark3: #212529;
+    --dark4: #2d3135;
+    --dark5: #424549;
+    --dark6: #404346;
+    --dark7: #9c9c9c;
+    --dark8: #dae0e7;
+    --dark9: #262a2e;
+    --font-color: 230 97 62;
+}
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'League Spartan', sans-serif;
-    --font-color: 230 97 62;
 }
 body {
     display: flex;
@@ -29,6 +40,9 @@ h4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top:0;
+    left:0;
 }
 .logo {
     font-size: 2em;
@@ -255,4 +269,89 @@ h4 {
 .nagivation a.button::after {
     width: 0 !important;
     height: 0 !important;
+}
+.footer {
+    background-color: rgb(var(--font-color));
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--dark6);
+}
+.footer h1 {
+    margin: 0;
+}
+.content {
+    flex-grow: 1;
+    text-align: center;
+    padding: 40px;
+}
+.instruction-box {
+    border: 2px solid rgb(var(--font-color));
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 40px;
+    background-color: var(--dark3);
+    text-align: left;
+    color: #fff;
+}
+.instruction-box h3 {
+    color: rgb(var(--font-color));
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.instruction-box p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+.instruction-box ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 15px;
+}
+.instruction-box li {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+.feedback-box {
+    border: 2px solid rgb(var(--font-color));
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: var(--dark3);
+    text-align: center;
+    color: #fff;
+}
+.feedback-box h3 {
+    color: rgb(var(--font-color));
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.feedback-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.feedback-form label {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.feedback-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+.feedback-form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(var(--font-color));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

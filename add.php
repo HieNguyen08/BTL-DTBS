@@ -115,11 +115,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                     </form>
                 </div>
                 <footer class="popupFooter">
-                <?php 
-                if ($success) {
-                    echo $success;
-                }
-                ?>
+                <?php if ($success) { echo $success; } ?>
                     <button form="myForm" class="submitBtn" type="Submit">Submit</button>
                 </footer>
             </div>

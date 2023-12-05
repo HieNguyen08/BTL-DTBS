@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&family=Poppins:wght@100;200;300;400&display=swap');
 
-:root{
+:root {
     --dark1: #0000004d;
     --dark2: #181c20;
     --dark3: #212529;
@@ -10,21 +10,24 @@
     --dark7: #9c9c9c;
     --dark8: #dae0e7;
     --dark9: #262a2e;
-    --red1: #902e31;
 }
-*{
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
-body{
+
+body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
+    background-color: #fff; /* Màu nền trắng */
 }
-.container{
+
+.container {
     padding: 20px;
     box-shadow: 3px 3px 20px var(--dark1);
     background: var(--dark3);
@@ -33,16 +36,20 @@ body{
     margin-top: 50px;
     width: 100%;
 }
-.container header .filterEntries{
+
+.container header .filterEntries {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
-.filterEntries .entries{
+
+.filterEntries .entries {
     color: var(--dark8);
 }
-.filterEntries .entries select, .filterEntries .filter input{
+
+.filterEntries .entries select,
+.filterEntries .filter input {
     padding: 7px 10px;
     border: 1px solid var(--dark6);
     color: var(--dark8);

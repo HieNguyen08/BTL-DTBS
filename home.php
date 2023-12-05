@@ -21,6 +21,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
         <div class="header">
             <h2 class="logo">Database</h2>
             <nav class="nagivation">
+                <a href="home.php">Manage Document</a>
+                <a href="member.php">Manage Member</a>
                 <a class="button" href="logout.php"><button class="btnlogout">Log Out</button></a>
             </nav>
         </div>
