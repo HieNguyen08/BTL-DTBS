@@ -31,7 +31,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                 <form class="filterEntries" action="search.php" method="get">
                     <div class="filter">
                         <label for="search">Search:</label>
-                        <input action="home.php" type="search" id="search" name="search" placeholder="Enter Name/Author/Publisher">
+                        <input action="home.php" type="search" id="search" name="search" placeholder="Enter ID/Name/Author/Publisher">
                     </div>
                 </form>
                 <div class="addMemberBtn">
@@ -62,7 +62,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['user'])) {
                         LEFT JOIN books_author AS A ON A.Document_ID = D.Document_ID
                         LEFT JOIN published_by AS Pb ON Pb.Document_ID = D.Document_ID 
                         LEFT JOIN  publishers AS P ON Pb.Publisher_ID = P.Publisher_ID
-                        WHERE D.Dname LIKE '%{$search}%' OR P.pname LIKE '%{$search}%' OR A.Author LIKE '%{$search}%'
+                        WHERE D.Dname LIKE '%{$search}%' OR P.pname LIKE '%{$search}%' OR A.Author LIKE '%{$search}%' OR D.Document_ID LIKE '%{$search}%'
                         GROUP BY D.Document_ID;";}
                         else {
                         $sql = 
